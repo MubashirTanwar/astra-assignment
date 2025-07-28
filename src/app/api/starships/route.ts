@@ -1,16 +1,25 @@
 import { SWAPI_API_ENDPOINTS } from "@/lib/constants";
-import { applyCrewFilter, applyHyperdriveFilter, parseQueryParams, sortByHyperdrive } from "@/lib/filters";
-import { StarshipType } from "@/lib/types";
+import {
+  applyCrewFilter,
+  applyHyperdriveFilter,
+  parseQueryParams,
+  sortByHyperdrive,
+} from "@/lib/filters";
+import { ResponseType, StarshipType } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<ResponseType>> {
   try {
     const { search, filters, sort, order } = parseQueryParams(req);
 
     // Fetch initial data
-    const response = await fetch(`${SWAPI_API_ENDPOINTS.starships}?search=${search}`);
+    const response = await fetch(
+      `${SWAPI_API_ENDPOINTS.starships}?search=${search}`
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch data from SWAPI");
     }
@@ -34,11 +43,15 @@ export async function GET(req: NextRequest) {
       ...data,
       results,
     });
-
   } catch (error) {
-    console.error("Error in starships API:", error);
+    console.error("Error fetching starships:", error);
     return NextResponse.json(
-      { error: "An unknown error occurred" },
+      {
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      },
       { status: 500 }
     );
   }

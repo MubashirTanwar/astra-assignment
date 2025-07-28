@@ -6,6 +6,19 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
+/**
+ * Converts an object of query parameters into a URL query string.
+ *
+ * @param query - An object containing query parameters as key-value pairs.
+ * @returns A URL query string.
+ *
+ * @example
+ * ```typescript
+ * parseQuery({ foo: "bar", baz: 42 }); // "?foo=bar&baz=42"
+ * parseQuery({}); // ""
+ * ```
+ */
+
 export const parseQuery = (query: Record<string, string | number>): string => {
   const params = new URLSearchParams();
   Object.entries(query).forEach(([key, value]) => {
