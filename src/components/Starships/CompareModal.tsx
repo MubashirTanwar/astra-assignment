@@ -23,7 +23,7 @@ export function CompareModal() {
 
   return (
     <Dialog open={compareModalOpen} onOpenChange={setCompareModalOpen}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto bg-slate-900 border-purple-500/30 !w-[80vw] ">
+      <DialogContent className="max-h-[90vh] overflow-y-auto  bg-gradient-to-br from-slate-300 via-purple-400 to-slate-400 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 !w-[80vw]">  
         <DialogHeader>
           <DialogTitle className="text-2xl text-white flex items-center gap-2">
             <Rocket className="h-6 w-6 text-purple-400" />
@@ -95,7 +95,6 @@ export function CompareModal() {
           <Button
             onClick={() => setCompareModalOpen(false)}
             variant="outline"
-            className="border-purple-500 text-purple-200 hover:bg-purple-800/50"
           >
             Close Comparison
           </Button>

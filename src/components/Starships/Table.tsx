@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useMemo, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useAtom } from "jotai"
-import { toast } from "sonner"
-import type { StarshipType } from "@/lib/types"
+import { useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAtom } from "jotai";
+import { toast } from "sonner";
+import type { StarshipType } from "@/lib/types";
 import {
   useReactTable,
   getCoreRowModel,
@@ -14,27 +14,40 @@ import {
   getFilteredRowModel,
   flexRender,
   createColumnHelper,
-} from "@tanstack/react-table"
-import { TableSkeleton } from "@/components/Starships/TableSkeleton"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ArrowUpDown, ArrowUp, ArrowDown, Zap, Users, Rocket } from "lucide-react"
-import { selectedStarshipsAtom, tableStateAtom } from "@/lib/atom"
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Zap,
+  Users,
+  Rocket,
+} from "lucide-react";
+import { selectedStarshipsAtom, tableStateAtom } from "@/lib/atom";
 
-const columnHelper = createColumnHelper<StarshipType>()
+const columnHelper = createColumnHelper<StarshipType>();
 
 interface StarshipDataTableProps {
-  flatData: StarshipType[]
-  status: "pending" | "error" | "success"
-  isFetchingNextPage: boolean
-  hasNextPage: boolean
-  fetchNextPage: () => void
-  scrollRef: React.Ref<HTMLDivElement>
-  inView: boolean
-  error: unknown
+  flatData: StarshipType[];
+  status: "pending" | "error" | "success";
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  scrollRef: React.Ref<HTMLDivElement>;
+  inView: boolean;
+  error: unknown;
 }
 
 export function StarshipDataTable({
@@ -47,44 +60,51 @@ export function StarshipDataTable({
   inView,
   error,
 }: StarshipDataTableProps) {
-  const [selectedStarships, setSelectedStarships] = useAtom(selectedStarshipsAtom)
-  const [tableState, setTableState] = useAtom(tableStateAtom)
+  const [selectedStarships, setSelectedStarships] = useAtom(
+    selectedStarshipsAtom
+  );
+  const [tableState, setTableState] = useAtom(tableStateAtom);
 
   const handleStarshipSelect = (starship: StarshipType, checked: boolean) => {
     if (checked) {
       if (selectedStarships.length >= 3) {
-        toast.error("Maximum 3 starships can be selected for comparison")
-        return
+        toast.error("Maximum 3 starships can be selected for comparison");
+        return;
       }
-      setSelectedStarships([...selectedStarships, starship])
-      toast.success(`${starship.name} added to comparison`)
+      setSelectedStarships([...selectedStarships, starship]);
+      toast.success(`${starship.name} added to comparison`);
     } else {
-      setSelectedStarships(selectedStarships.filter((s) => s.name !== starship.name))
-      toast.info(`${starship.name} removed from comparison`)
+      setSelectedStarships(
+        selectedStarships.filter((s) => s.name !== starship.name)
+      );
+      toast.info(`${starship.name} removed from comparison`);
     }
-  }
+  };
 
   const columns = useMemo(
     () => [
       columnHelper.display({
         id: "select",
         header: ({ table }) => (
-          <div className="flex items-center space-x-2">
-          </div>
+          <div className="flex items-center space-x-2"></div>
         ),
         cell: ({ row }) => {
-          const starship = row.original
-          const isSelected = selectedStarships.some((s) => s.name === starship.name)
+          const starship = row.original;
+          const isSelected = selectedStarships.some(
+            (s) => s.name === starship.name
+          );
           return (
             <div className="flex items-center space-x-2">
               <Checkbox
                 checked={isSelected}
-                onCheckedChange={(checked) => handleStarshipSelect(starship, !!checked)}
+                onCheckedChange={(checked) =>
+                  handleStarshipSelect(starship, !!checked)
+                }
                 aria-label="Select row"
                 className="border-purple-300 data-[state=checked]:bg-purple-600"
               />
             </div>
-          )
+          );
         },
         enableSorting: false,
         enableHiding: false,
@@ -94,7 +114,7 @@ export function StarshipDataTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold text-purple-100 hover:text-white hover:bg-purple-800/50"
+            className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 "
           >
             <Rocket className="mr-2 h-4 w-4" />
             Starship Name
@@ -107,23 +127,43 @@ export function StarshipDataTable({
             )}
           </Button>
         ),
-        cell: ({ getValue }) => <div className="font-medium text-white text-lg">{getValue()}</div>,
+        cell: ({ getValue }) => (
+          <div className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
+            {getValue()}
+          </div>
+        ),
       }),
       columnHelper.accessor("model", {
-        header: "Model",
-        cell: ({ getValue }) => <div className="text-purple-200">{getValue() || "Unknown Model"}</div>,
+        header: ({ column }) => (
+          <p className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
+            Model
+            </p>
+        ),
+        cell: ({ getValue }) => (
+          <div className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
+            {getValue() || "Unknown Model"}
+          </div>
+        ),
       }),
       columnHelper.accessor("manufacturer", {
-        header: "Manufacturer",
+        header: ({ column }) => (
+          <p className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
+            Manufacturer
+            </p>
+        ),
         maxSize: 100,
-        cell: ({ getValue }) => <div className="text-purple-200">{getValue() || "Unknown Manufacturer"}</div>,
+        cell: ({ getValue }) => (
+          <div className="text-purple-200">
+            {getValue() || "Unknown Manufacturer"}
+          </div>
+        ),
       }),
       columnHelper.accessor("hyperdrive_rating", {
         header: ({ column }) => (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold text-purple-100 hover:text-white hover:bg-purple-800/50"
+            className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 "
           >
             <Zap className="mr-2 h-4 w-4" />
             Hyperdrive
@@ -137,18 +177,24 @@ export function StarshipDataTable({
           </Button>
         ),
         cell: ({ getValue }) => {
-          const rating = getValue()
+          const rating = getValue();
           if (!rating || rating === "unknown") {
             return (
               <Badge variant="secondary" className="bg-gray-600 text-gray-200">
                 Unknown
               </Badge>
-            )
+            );
           }
-          const numRating = Number.parseFloat(rating)
+          const numRating = Number.parseFloat(rating);
           return (
             <Badge
-              variant={numRating < 1.0 ? "default" : numRating <= 2.0 ? "secondary" : "destructive"}
+              variant={
+                numRating < 1.0
+                  ? "default"
+                  : numRating <= 2.0
+                    ? "secondary"
+                    : "destructive"
+              }
               className={
                 numRating < 1.0
                   ? "bg-green-600 text-green-100 hover:bg-green-700"
@@ -159,7 +205,7 @@ export function StarshipDataTable({
             >
               {rating}
             </Badge>
-          )
+          );
         },
       }),
       columnHelper.accessor("crew", {
@@ -173,20 +219,27 @@ export function StarshipDataTable({
           </Button>
         ),
         cell: ({ getValue }) => {
-          const crew = getValue()
+          const crew = getValue();
           if (!crew || crew === "unknown") {
             return (
-              <Badge variant="outline" className="border-purple-400 text-purple-200">
+              <Badge
+                variant="outline"
+                className="border-purple-400 text-purple-200"
+              >
                 Unknown
               </Badge>
-            )
+            );
           }
-          return <Badge className="bg-purple-600 text-purple-100 hover:bg-purple-700">{crew}</Badge>
+          return (
+            <Badge className="bg-purple-600 text-purple-100 hover:bg-purple-700">
+              {crew}
+            </Badge>
+          );
         },
       }),
     ],
-    [selectedStarships, setSelectedStarships],
-  )
+    [selectedStarships, setSelectedStarships]
+  );
 
   const table = useReactTable({
     data: flatData,
@@ -199,53 +252,69 @@ export function StarshipDataTable({
       columnFilters: tableState.columnFilters,
     },
     onSortingChange: (updater) => {
-      const newSorting = typeof updater === "function" ? updater(tableState.sorting) : updater
-      setTableState((prev) => ({ ...prev, sorting: newSorting }))
+      const newSorting =
+        typeof updater === "function" ? updater(tableState.sorting) : updater;
+      setTableState((prev) => ({ ...prev, sorting: newSorting }));
     },
     onColumnFiltersChange: (updater) => {
-      const newFilters = typeof updater === "function" ? updater(tableState.columnFilters) : updater
-      setTableState((prev) => ({ ...prev, columnFilters: newFilters }))
+      const newFilters =
+        typeof updater === "function"
+          ? updater(tableState.columnFilters)
+          : updater;
+      setTableState((prev) => ({ ...prev, columnFilters: newFilters }));
     },
-  })
+  });
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+      fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     if (error) {
-      toast.error(`Failed to load starships:`)
+      toast.error(`Failed to load starships:`);
     }
-  }, [error])
-
-  if (status === "pending") {
-    return <TableSkeleton />
-  }
+  }, [error]);
 
   return (
     <div className="space-y-4 py-2">
       {/* Results Summary */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-purple-200">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-sm text-purple-700 dark:text-purple-200"
+      >
         Showing {flatData.length} starships
         {hasNextPage && " (scroll down for more)"}
       </motion.div>
 
       {/* Table */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="bg-slate-800/50 border-purple-500/30 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="shadow-sm bg-slate-800/50 border-purple-500/30 backdrop-blur-sm py-2">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id} className="border-purple-500/30 hover:bg-purple-900/20">
+                    <TableRow
+                      key={headerGroup.id}
+                      className="border-purple-300/30 hover:bg-purple-500/20"
+                    >
                       {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id} className="whitespace-nowrap bg-slate-900/50">
+                        <TableHead
+                          key={header.id}
+                          className="whitespace-nowrap bg-slate-900/50"
+                        >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -265,15 +334,24 @@ export function StarshipDataTable({
                           data-state={row.getIsSelected() && "selected"}
                         >
                           {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id} className="whitespace-nowrap">
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            <TableCell
+                              key={cell.id}
+                              className="whitespace-nowrap"
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
                             </TableCell>
                           ))}
                         </motion.tr>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center text-purple-200">
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-24 text-center text-purple-200"
+                        >
                           No starships found in the database.
                         </TableCell>
                       </TableRow>
@@ -300,7 +378,11 @@ export function StarshipDataTable({
               <span>Loading more starships...</span>
             </motion.div>
           ) : hasNextPage ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
               <Button
                 variant="outline"
                 onClick={() => fetchNextPage()}
@@ -310,12 +392,16 @@ export function StarshipDataTable({
               </Button>
             </motion.div>
           ) : flatData.length > 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-purple-300">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-purple-300"
+            >
               All starships loaded
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
     </div>
-  )
+  );
 }
