@@ -3,7 +3,7 @@ import { CrewFilter, FilterOption, HyperDriveFilter } from "./types";
 
 export const PAGE_SIZE = 10;
 
-export const SWAPI_API_BASE_URL = "http://swapi.dev/api/";
+export const SWAPI_API_BASE_URL = "https://swapi.dev/api";
 
 export const SWAPI_API_ENDPOINTS = {
   people: `${SWAPI_API_BASE_URL}/people`,
@@ -28,6 +28,10 @@ export const CREW_FILTERS: FilterOption<CrewFilter>[] = [
   { value: "6-50", label: "Medium (6-50)" },
   { value: "50+", label: "Large (50+)" },
 ];
+
+export const SORT_OPTIONS = [
+  { value: "hdr", label: "Hyperdrive Rating" },
+]
 
 
 // // Example==

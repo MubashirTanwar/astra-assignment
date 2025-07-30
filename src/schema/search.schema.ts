@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const requestSchema = z.object({
+export const queryParamsSchmea = z.object({
   search: z.string().optional(),
-  page: z.number().int().min(1).default(1),
+  page: z.string().optional(),
   "filters.hdr": z.string().optional(),
   "filters.crew": z.string().optional(),
   sort: z.string().optional(),
@@ -22,4 +22,10 @@ export const responseSchema = z.object({
   next: z.string().nullable(),
   previous: z.string().nullable(),
   results: z.array(starshipsSchema),
+});
+
+export const errorResponseSchema = z.object({
+  error: z.string(),
+  message: z.string(),
+  statusCode: z.number(),
 });

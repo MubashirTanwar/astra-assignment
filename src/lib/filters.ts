@@ -33,8 +33,8 @@ const parseQueryParams = (req: NextRequest): StarshipQueryParams => {
     search: searchParams.get("search") || "",
     page: parseInt(searchParams.get("page") || "1", 10),
     filters: {
-      hdr: searchParams.get("filter.hdr") || undefined,
-      crew: searchParams.get("filter.crew") || undefined,
+      hdr: searchParams.get("filters.hdr") || undefined,
+      crew: searchParams.get("filters.crew") || undefined,
     },
     sort: searchParams.get("sort") || undefined,
   };
