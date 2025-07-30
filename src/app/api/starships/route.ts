@@ -1,58 +1,69 @@
+import { createNextHandler } from "@ts-rest/serverless/next";
 import { SWAPI_API_ENDPOINTS } from "@/lib/constants";
+import { StarshipType } from "@/lib/types";
 import {
   applyCrewFilter,
   applyHyperdriveFilter,
-  parseQueryParams,
   sortByHyperdrive,
 } from "@/lib/filters";
-import { ResponseType, StarshipType } from "@/lib/types";
-import { NextRequest, NextResponse } from "next/server";
+import { starshipsContract } from "@/shared/starships";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-export async function GET(
-  req: NextRequest
-): Promise<NextResponse<ResponseType>> {
-  try {
-    const { search, filters, sort, order } = parseQueryParams(req);
+const handler = createNextHandler(
+  starshipsContract,
+  {
+    getStarships: async ({ query }) => {
+      const {
+        search,
+        page,
+        sort,
+        order,
+        ["filters.hdr"]: hdr,
+        ["filters.crew"]: crew,
+      } = query;
+      console.log("Received query parameters:", query)
+      console.log("Fetching starships from SWAPI:", SWAPI_API_ENDPOINTS.starships, "with search:", search, "and page:", page);
+      console.log("URl:", `${SWAPI_API_ENDPOINTS.starships}?search=${search}&page=${page}`);
+      const response = await fetch(
+        `${SWAPI_API_ENDPOINTS.starships}?search=${search}&page=${page}`
+      );
+      console.log("Response status:", response.status);
+      if (!response.ok) {
+        throw new Error("Failed to fetch data from SWAPI");
+      }
 
-    // Fetch initial data
-    const response = await fetch(
-      `${SWAPI_API_ENDPOINTS.starships}?search=${search}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch data from SWAPI");
-    }
+      const data = await response.json();
+      let results: StarshipType[] = data.results || [];
 
-    const data = await response.json();
-    let results: StarshipType[] = data.results || [];
+      if (hdr) {
+        results = applyHyperdriveFilter(results, hdr);
+      }
 
-    if (filters?.hdr) {
-      results = applyHyperdriveFilter(results, filters.hdr);
-    }
+      if (crew) {
+        results = applyCrewFilter(results, crew);
+      }
 
-    if (filters?.crew) {
-      results = applyCrewFilter(results, filters.crew);
-    }
-
-    if (sort === "hdr") {
-      results = sortByHyperdrive(results, order);
-    }
-
-    return NextResponse.json({
-      ...data,
-      results,
-    });
-  } catch (error) {
-    console.error("Error fetching starships:", error);
-    return NextResponse.json(
-      {
-        count: 0,
-        next: null,
-        previous: null,
-        results: [],
-      },
-      { status: 500 }
-    );
+      if (sort === "hdr") {
+        results = sortByHyperdrive(results, order);
+      }
+      return {
+        status: 200,
+        body: {
+          ...data,
+          results,
+        },
+      };
+    },
+  },
+  {
+    basePath: "/api/starships",
+    jsonQuery: false,
+    responseValidation: false,
+    handlerType: "app-router",
   }
-}
+);
+
+export {
+  handler as GET,
+};

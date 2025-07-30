@@ -2,17 +2,20 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./globals.css";
-import Providers from "@/providers/QueryClientProvider";
+import Providers from "@/providers";
 import { Toaster } from "@/components/ui/sonner";
+import localFont from "next/font/local";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const quicksand = localFont({
+  src: "./fonts/Quicksand.ttf",
+  variable: "--font-quicksand",
+  weight: "100 900",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const starwars = localFont({
+  src: "./fonts/Starjedi.ttf",
+  variable: "--font-starwars",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${quicksand.variable} ${starwars.variable} antialiased`}
       >
         <Providers>
           <main className="min-h-screen">{children}</main>

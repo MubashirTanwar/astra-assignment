@@ -1,6 +1,22 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* globals.css */
+body {
+  font-family: "Quicksand", sans-serif;
+}
+
+@font-face {
+  font-family: "Starjedi";
+  src: url("./fonts/Starjedi.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-starwars {
+  font-family: "Starjedi", sans-serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

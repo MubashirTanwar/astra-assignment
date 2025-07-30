@@ -1,43 +1,24 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { StarshipType, ResponseType, QueryParamsType } from '@/lib/types';
+import { ResponseType, QueryParamsType } from '@/lib/types';
 import { parseQuery } from '@/lib/utils';
-
-const fetchStarships = async (
-  params: QueryParamsType
-): Promise<ResponseType> => {
-  const searchParams =  parseQuery(params);
-
-  const response = await fetch(`/api/starships${searchParams}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch starships');
-  }
-
-  const data = await response.json();
-  return data;
-};
+import { tsr } from '@/lib/api-client';
 
 export const useInfiniteStarships = (initialParams: Omit<QueryParamsType, 'page'>) => {
-  return useInfiniteQuery<ResponseType, Error>({
+  return tsr.starships.getStarships.useInfiniteQuery({
     queryKey: ['starships', initialParams],
-    queryFn: ({ pageParam }) => 
-      fetchStarships({ 
-        ...initialParams, 
-        page: pageParam as string 
-      }),
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.next) return undefined;
-      
-      const url = new URL(lastPage.next);
+    queryData: (context) => ({
+      query: {
+        ...initialParams,
+        page: (context.pageParam as unknown as string) || '1',
+      },
+    }),
+    getNextPageParam: (lastPage: { body: ResponseType }) => {
+      console.log("Last page next URL:", lastPage);
+      if (!lastPage.body.next) return undefined;
+      const url = new URL(lastPage.body.next);
       const nextPage = url.searchParams.get('page');
       return nextPage ? parseInt(nextPage) : undefined;
-    },
+    },  
     initialPageParam: 1,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 };

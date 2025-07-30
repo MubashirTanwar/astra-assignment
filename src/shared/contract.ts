@@ -8,7 +8,7 @@ export const appContracts = c.router(
     starships: starshipsContract,
   },
   {
-    pathPrefix: "/api",
+    pathPrefix: "/api/starships",
   }
 );
 

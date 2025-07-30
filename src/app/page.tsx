@@ -1,11 +1,15 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import Starship from "@/components/Starships"
+
+export default function Page() {
   return (
-    <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main>
-        
-      </main>
-    </div>
-  );
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950">
+        <div className="container mx-auto py-8 px-4">
+          <Starship />
+        </div>
+      </div>
+    </>
+  )
 }
