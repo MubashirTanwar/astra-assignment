@@ -22,13 +22,10 @@ const handler = createNextHandler(
         ["filters.hdr"]: hdr,
         ["filters.crew"]: crew,
       } = query;
-      console.log("Received query parameters:", query)
-      console.log("Fetching starships from SWAPI:", SWAPI_API_ENDPOINTS.starships, "with search:", search, "and page:", page);
-      console.log("URl:", `${SWAPI_API_ENDPOINTS.starships}?search=${search}&page=${page}`);
+
       const response = await fetch(
         `${SWAPI_API_ENDPOINTS.starships}?search=${search}&page=${page}`
       );
-      console.log("Response status:", response.status);
       if (!response.ok) {
         throw new Error("Failed to fetch data from SWAPI");
       }

@@ -62,7 +62,6 @@ export function removeUrlSyncState(
   params.delete("order")
   params.delete("compare")
 
-  const newUrl = params.toString() ? `?${params.toString()}` : ""
-  console.log("Removing URL sync state, new URL:", newUrl)
+  const newUrl = params.toString() ? `?${params.toString()}` : "/"
   router.push(newUrl, { scroll: false })
 }
