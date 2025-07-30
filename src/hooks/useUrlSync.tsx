@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAtom } from "jotai"
 import { tableStateAtom, compareModalOpenAtom } from "@/lib/atom"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 
 export function useUrlSync() {
   const router = useRouter()
@@ -48,8 +49,9 @@ export function useUrlSync() {
 }
 
 
-export function removeUrlSyncState() {
-  const router = useRouter()
+export function removeUrlSyncState(
+    router: AppRouterInstance
+) {
   const params = new URLSearchParams(window.location.search)
 
   // Remove all relevant params
@@ -61,5 +63,6 @@ export function removeUrlSyncState() {
   params.delete("compare")
 
   const newUrl = params.toString() ? `?${params.toString()}` : ""
-  router.replace(newUrl, { scroll: false })
+  console.log("Removing URL sync state, new URL:", newUrl)
+  router.push(newUrl, { scroll: false })
 }

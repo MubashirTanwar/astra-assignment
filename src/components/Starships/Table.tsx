@@ -70,7 +70,6 @@ export function StarshipDataTable({
         id: "select",
         header: ({ table }) => (
           <div className="flex items-center space-x-2">
-            
           </div>
         ),
         cell: ({ row }) => {
@@ -116,6 +115,7 @@ export function StarshipDataTable({
       }),
       columnHelper.accessor("manufacturer", {
         header: "Manufacturer",
+        maxSize: 100,
         cell: ({ getValue }) => <div className="text-purple-200">{getValue() || "Unknown Manufacturer"}</div>,
       }),
       columnHelper.accessor("hyperdrive_rating", {
@@ -166,18 +166,10 @@ export function StarshipDataTable({
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-auto p-0 font-semibold text-purple-100 hover:text-white hover:bg-purple-800/50"
           >
             <Users className="mr-2 h-4 w-4" />
             Crew
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
           </Button>
         ),
         cell: ({ getValue }) => {
@@ -233,7 +225,7 @@ export function StarshipDataTable({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 py-2">
       {/* Results Summary */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-purple-200">
         Showing {flatData.length} starships

@@ -12,7 +12,6 @@ export const useInfiniteStarships = (initialParams: Omit<QueryParamsType, 'page'
       },
     }),
     getNextPageParam: (lastPage: { body: ResponseType }) => {
-      console.log("Last page next URL:", lastPage);
       if (!lastPage.body.next) return undefined;
       const url = new URL(lastPage.body.next);
       const nextPage = url.searchParams.get('page');
