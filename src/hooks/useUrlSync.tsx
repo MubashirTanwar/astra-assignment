@@ -42,8 +42,9 @@ export function useUrlSync() {
     if (tableState.sortField !== "none") params.set("sort", tableState.sortField)
     if (tableState.sortOrder !== "asc") params.set("order", tableState.sortOrder)
     if (compareModalOpen) params.set("compare", "true")
+    else params.delete("compare")
 
-    const newUrl = params.toString() ? `?${params.toString()}` : ""
+    const newUrl = params.toString() ? `?${params.toString()}` : "/"
     router.replace(newUrl, { scroll: false })
   }, [tableState, compareModalOpen, router])
 }
