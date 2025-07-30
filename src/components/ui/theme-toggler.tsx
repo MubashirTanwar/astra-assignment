@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Classic } from "@theme-toggles/react";
-import "@theme-toggles/react/css/Classic.css";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
@@ -10,11 +9,13 @@ export function ThemeToggle() {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialDarkMode = storedTheme === "dark" || (!storedTheme && prefersDark);
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const initialDarkMode =
+      storedTheme === "dark" || (!storedTheme && prefersDark);
 
     setIsDarkMode(initialDarkMode);
-
     if (initialDarkMode) {
       document.documentElement.classList.add("dark");
     } else {
@@ -39,47 +40,162 @@ export function ThemeToggle() {
     <button
       onClick={toggleTheme}
       className={cn(
-        "relative w-20 h-10 rounded-full p-1 shadow-md transition-all duration-500 ease-in-out",
-        "focus:outline-none backdrop-blur-md",
-        "border border-[#d9dbde] dark:border-[#242424]",
-        "bg-white/10 dark:bg-black/10"
+        "relative w-20 h-10 rounded-full p-1 transition-all duration-300 ease-in-out",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+        "border shadow-md backdrop-blur-md",
+        isDarkMode
+          ? "bg-white/80 border-slate-600"
+          : "bg-slate-800/80 border-gray-300"
       )}
       aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
     >
-      {/* Track inner background */}
+      {/* Track background */}
       <div
         className={cn(
-          "absolute inset-1 rounded-full transition-colors duration-500",
-          isDarkMode ? "bg-[#141414]/60" : "bg-white/50"
+          "absolute inset-1 rounded-full transition-colors duration-300",
+          isDarkMode ? "bg-slate-700/60" : "bg-gray-100/60"
         )}
       />
 
-      {/* Knob */}
-      <div
+      {/* Animated knob */}
+      <motion.div
         className={cn(
-          "absolute top-1 w-8 h-8 rounded-full shadow-lg transition-all duration-500 ease-in-out",
-          "flex items-center justify-center z-10 backdrop-blur-md border",
-          isDarkMode
-            ? "left-11 bg-black/20 border-[#242424]"
-            : "left-1 bg-white/70 border-[#d9dbde]"
+          "absolute top-1 w-8 h-8 rounded-full shadow-lg z-10",
+          "flex items-center justify-center backdrop-blur-md border bg-white "
         )}
+        animate={{
+          x: isDarkMode ? 40 : 0,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 30,
+        }}
       >
-        <div
-          className={cn(
-            "flex items-center justify-center transition-colors duration-500",
-            isDarkMode ? "[&>*]:text-[#cccccc]" : "[&>*]:text-[#1f1f1f]"
-          )}
+        {/* Icon with rotation animation */}
+        <motion.div
+          animate={{
+            rotate: isDarkMode ? 360 : 0,
+            scale: isDarkMode ? 0.9 : 1,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
+          className="flex items-center justify-center"
         >
-          <Classic
-            toggled={isDarkMode}
-            toggle={() => {}}
-            duration={750}
-            placeholder={undefined}
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-          />
-        </div>
+          {isDarkMode ? (
+            <Dark className="w-8 h-8" />
+          ) : (
+            <Light className="w-8 h-8 " />
+          )}
+        </motion.div>
+      </motion.div>
+
+      {/* Background icons */}
+      <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
+        {/* <Sun
+          className={cn(
+            "w-3 h-3 transition-opacity duration-300",
+            isDarkMode ? "opacity-30 text-slate-500" : "opacity-60 text-amber-400",
+          )}
+        />
+        <Moon
+          className={cn(
+            "w-3 h-3 transition-opacity duration-300",
+            isDarkMode ? "opacity-60 text-slate-300" : "opacity-30 text-slate-400",
+          )}
+        /> */}
+        {isDarkMode ? (
+          <Light className="w-3 h-3 text-slate-500" />
+        ) : (
+          <Dark className="w-3 h-3" />
+        )}
       </div>
     </button>
   );
 }
+
+const Light = (
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) => (
+  <svg
+    fill="currentColor"
+    viewBox="0 0 14 14"
+    role="img"
+    focusable="false"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g
+      id="SVGRepo_tracerCarrier"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></g>
+    <g id="SVGRepo_iconCarrier">
+      <path d="m 3.7423486,12.14805 c -1.006326,-0.467 -1.840911,-0.8561 -1.854633,-0.8647 -0.01699,-0.011 0.02245,-0.5331 0.123702,-1.6388 0.08176,-0.8928 0.149123,-1.6621 0.1497,-1.7096 l 0.001,-0.086 -0.136632,-0.01 c -0.240554,-0.018 -0.436155,-0.154 -0.537672,-0.3735 -0.04888,-0.1056 -0.05044,-0.1399 -0.05044,-1.107 0,-0.9911 3.8e-4,-0.9989 0.05462,-1.1166 0.06623,-0.1437 0.127358,-0.2118 0.260223,-0.2899 l 0.100989,-0.059 0,-1.5185 0,-1.5186 -0.253881,0 c -0.208798,0 -0.272063,-0.01 -0.356266,-0.05 -0.31304094,-0.1515 -0.31043194,-0.606 0.0044,-0.7584 0.09297,-0.045 0.146454,-0.047 1.035074,-0.047 0.860183,5e-4 0.944838,0 1.03209,0.044 0.171262,0.079 0.249503,0.2037 0.249503,0.3974 0,0.1224 -0.03849,0.2079 -0.134511,0.2988 -0.109853,0.1039 -0.171482,0.1143 -0.674948,0.1143 l -0.473696,0 0,2.587 0,2.587 0.148513,0.028 c 1.218724,0.2318 2.326583,1.1441 2.980792,2.4546 0.436844,0.875 0.679256,1.9049 0.713274,3.0302 l 0.01383,0.4574 -0.282676,0 -0.282676,-10e-4 -1.829683,-0.8491 z m 2.839574,-2.2374 c 0,-1.6992 -0.0032,-3.0894 -0.0071,-3.0894 -0.01605,0 -3.76356,-0.666 -3.813585,-0.6777 -0.05221,-0.012 -0.05411,-0.021 -0.04752,-0.22 l 0.0069,-0.2073 4.710842,-0.01 4.7108404,-0.01 0,0.2135 c 0,0.2018 -0.0029,0.2142 -0.05346,0.2262 -0.02941,0.01 -0.839397,0.1518 -1.799981,0.3217 -0.9605834,0.17 -1.8026134,0.3203 -1.8711774,0.334 l -0.124662,0.025 -0.006,3.0815 -0.006,3.0814 -0.849496,0.01 -0.849496,0.01 0,-3.0894 z m 2.146215,2.667 c 0.04871,-1.3717 0.373245,-2.5569 0.959825,-3.5052 0.5640244,-0.9118 1.3856284,-1.5937 2.2818474,-1.894 0.223559,-0.075 0.572073,-0.1556 0.590855,-0.1368 0.01035,0.01 0.438102,4.2313 0.429405,4.2373 -0.0024,0 -0.839219,0.3894 -1.859726,0.8617 l -1.8554724,0.8587 -0.280856,0 -0.280857,0 0.01498,-0.4217 z m -5.982708,-7.8059 c 0.09314,-0.7204 0.197041,-1.0837 0.453648,-1.5861 0.540747,-1.0588 1.567685,-1.7833 2.911229,-2.0539 0.493067,-0.099 0.714095,-0.1191 1.327052,-0.1184 1.04693,0.001 1.755415,0.1507 2.530667,0.5339 0.4134214,0.2044 0.7126284,0.4164 1.0208804,0.7235 0.640143,0.6378 0.986422,1.3974 1.118453,2.4535 l 0.0156,0.1247 -4.6937554,0 -4.693756,0 0.01,-0.077 z m 7.191114,-1.2823 c 0.2677534,-0.123 0.4507664,-0.3609 0.4850874,-0.6306 0.0087,-0.069 0.01023,-0.1247 0.0033,-0.1247 -0.0069,0 -0.06632,0.036 -0.132039,0.08 -0.3556924,0.2394 -0.9226674,0.27 -1.3171704,0.071 -0.0685,-0.034 -0.153945,-0.083 -0.189885,-0.1088 l -0.06535,-0.046 0,0.096 c 0,0.2882 0.226989,0.5723 0.554343,0.6939 0.179334,0.067 0.478856,0.052 0.661687,-0.032 z"></path>
+    </g>
+  </svg>
+);
+
+const Dark = (
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) => (
+  <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"  fill="currentColor" {...props}>
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g
+      id="SVGRepo_tracerCarrier"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></g>
+    <g id="SVGRepo_iconCarrier">
+      {" "}
+      <path
+        d="m10.35 35.62s-.75.14-1-1.48-.58-8.61-.3-8.87a10 10 0 0 1 2.07-.63s0-7.54 2.67-11.86 5.4-6.09 10.65-7.56a29.38 29.38 0 0 1 15.18.3c4.41 1.18 8.7 4.62 9.89 8.8a49.27 49.27 0 0 1 1.49 9.55 9.53 9.53 0 0 1 2.52.9c.17.33.43 9.12 0 9.38a1.6 1.6 0 0 1 -.87.23s7.86 18 7.59 19-12.93 6.36-30.1 6.23-26.05-5.41-26.36-6.11 6.57-17.88 6.57-17.88z"
+        fill="#1d1d1b"
+      ></path>{" "}
+      <path
+        d="m13.24 27.92s-.6-7.65 1.3-11.91a19.6 19.6 0 0 1 7.75-8.23 20.47 20.47 0 0 1 6.51-1.45c.05.16.67 10.23.66 11.61a27 27 0 0 1 -.57 4s-4-2.44-8.16-1.38a10.47 10.47 0 0 0 -7.49 7.36z"
+        fill="#6a6a6a"
+      ></path>{" "}
+      <path
+        d="m30.11 22.18s.53-3.69.54-4.89-.8-10.82-.6-10.95a4.11 4.11 0 0 1 1.88 0c.07.16 1.07 11.66 1.28 13.22a9.33 9.33 0 0 1 .27 2.44 2.85 2.85 0 0 1 -3.37.18z"
+        fill="#6a6a6a"
+      ></path>{" "}
+      <path
+        d="m34.8 21.44a76.48 76.48 0 0 1 -1.4-9.35c-.17-3.62-.51-5.65-.06-5.83s6.66.17 10.42 3.45 4.06 5.61 3.81 5.66-2.52-1-2.64-.77-.15.8.06.92 2.69 1.1 2.82 1.26a4.18 4.18 0 0 1 .28.95 16.94 16.94 0 0 0 -3-1.13c-.12.17-.23.92 0 1s3 1.3 3 1.3l.11.79s-2.83-1.18-3-1.14-.36.8-.15.92 3.16 1.26 3.25 1.43.41 1.36.41 1.36l-1.71-.54s.31.87.48 1 1.3.42 1.31.76a31.35 31.35 0 0 1 .2 3.33c-.12 0-2.2-6.45-5.21-7.09s-8.98 1.72-8.98 1.72z"
+        fill="#6a6a6a"
+      ></path>{" "}
+      <path
+        d="m22.44 22.28c2.21 0 7.19 2.45 9.76 1.84s6.89-2.79 9.51-2.81 4.07 2.48 6.36 7.84 7.14 17.34 7 17.34-8.1-17.89-9.66-20.23-2.66-3-5.86-2.77-6.81 1-6.85 1.41 0 7.17.49 7.75 3.06.71 6.18.51 5-.33 5.77-.64a10.14 10.14 0 0 0 1.69-1l7.79 16.48a30.15 30.15 0 0 0 -2.94-2.56c-.21.05-.31.8-.19.88s3.67 3.33 4 3.7a12.43 12.43 0 0 1 1.61 2.63c-.12.17-.45.55-.66.47s-5-5.71-5.39-5.83-.45.6-.45.6 5.18 5.5 5.06 5.63a8.62 8.62 0 0 1 -1.15.57s-4.34-5-4.5-4.94-.69.6-.4.81a45.71 45.71 0 0 1 4.07 4.36 7 7 0 0 1 -1.2.4 46.49 46.49 0 0 0 -3.58-3.72c-.25 0-.61.39-.49.55s3.34 3.29 3.22 3.46a4 4 0 0 1 -1.16.37s-2.47-2.59-2.65-2.59-.74.31-.53.6 2.39 2.19 2.27 2.28a4.86 4.86 0 0 1 -1 .19c-.13 0-2-2-2.22-2s-.78.19-.65.48 1.83 1.79 1.63 1.92-5.17 1.66-15.76 1.51-14.84-1.85-14.84-1.85a46 46 0 0 0 -4.22-3.69c-.37 0-.78.6-.61.72a29.31 29.31 0 0 1 2.86 2.6c-.16 0-3.27-.92-4.32-1.1a7.6 7.6 0 0 1 -2.26-.61c0-.13 6-14.45 6.27-14.41s4.29 10.07 4.29 10.07a2.77 2.77 0 0 0 1.2 2.89 3.9 3.9 0 0 0 3.49-.25l15.51.08c.12 0 2.65 1.27 3.69-.68s.44-2.67.44-2.67 4-11.27 3.76-11.52a5.63 5.63 0 0 0 -1.76-.35s-2.75 10.32-3 10.33-1.26-.3-1.68-.34a3.18 3.18 0 0 0 -.7 0l-5.48-7.62s1.1-6-3.28-6-3.14 6-3.14 6-1-.06-2 1.51-3.39 6.29-3.39 6.29a3.77 3.77 0 0 0 -1.45.2c-.66.27-1.07.49-1.07.49s-3.54-8.29-3.46-8.46.82-2.15 1.2-2.16 2.93.39 3.93.41 1.16-.11 1.2-.28.27-.8.1-.8-5.11-.57-5.48-.57-1.07 2.14-1.36 2.23-1.32.25-1.2 0 2.16-5.13 2.29-5.1 7.53 1.07 9.73.64 2.76-1.11 3.07-2.16a31.45 31.45 0 0 0 .25-6.59 19.1 19.1 0 0 0 -6.2-1.31c-2.79-.09-4.67-.13-5.87 1.82s-10.79 27.71-10.96 27.76a3.64 3.64 0 0 1 -.92-.29s4.91-14 6.78-19.26 3.47-11.56 9.47-11.46z"
+        fill="#6a6a6a"
+      ></path>{" "}
+      <path
+        d="m28.76 40.3a14.69 14.69 0 0 0 2.25 0l2.29-.09s-.39 9.67 0 9.75.67.27.66-.06-.19-7.75.06-7.79.75 1.52.75 1.52-.14 6.42 0 6.46.88.27.84.06 0-4.75 0-4.75l1.43 2.26-.79.06s-.08 2 .17 2a4.75 4.75 0 0 0 .71 0c.12 0 .11 1.16.11 1.16s-7.26-.19-9.8-.13-2.74.11-2.74.11a6.75 6.75 0 0 0 -.55-2l-.62-1.28s4.86-7.15 5.23-7.28z"
+        fill="#6a6a6a"
+      ></path>{" "}
+      <g fill="#1d1d1b">
+        {" "}
+        <path d="m30.57 41.13c.28-.1.79-.06.84.1s.41 8.41.17 8.63-.88.14-.88 0-.25-8.69-.13-8.73z"></path>{" "}
+        <path d="m28.74 41.26c.21-.09.7-.19.79 0s.55 8.61.38 8.66-.87.18-.87 0-.3-8.66-.3-8.66z"></path>{" "}
+        <path d="m27 44.8c.06-.14.87-.4.87-.23a52.12 52.12 0 0 1 .21 5.25 3 3 0 0 1 -.79.06s-.38-4.88-.29-5.08z"></path>{" "}
+        <path d="m25.25 46.8c0-.17.57-.64.65-.51a14 14 0 0 1 .26 3.45 4 4 0 0 1 -.79.14s-.16-2.88-.12-3.08z"></path>{" "}
+        <path d="m41.23 35.62c.19-.1 2.79-.16 4.58-.37a11 11 0 0 1 1.78-.25c.21 0 .48.87.36 1a17.41 17.41 0 0 1 -4.32.69c-1.46 0-2.29 0-2.29 0s-.48-.9-.11-1.07z"></path>{" "}
+        <path d="m42 38.39c.34-.09 1.41 1.51 1.41 1.51s-.19.79-.4.63a9.86 9.86 0 0 1 -1.5-1.63c-.08-.21.29-.46.49-.51z"></path>{" "}
+        <path d="m40.41 39.68c.29-.1 2.3 1.78 2.22 2s-.15.63-.28.59a19.84 19.84 0 0 1 -2.43-2.11c-.04-.22.37-.44.49-.48z"></path>{" "}
+        <path d="m39.41 41.16s2.55 2 2.47 2.32a2.36 2.36 0 0 1 -.36.67s-2.93-2.38-2.81-2.6.53-.26.7-.39z"></path>{" "}
+        <path d="m14.45 48.4c.2.07 2.81 2.31 2.82 2.72s-.11.63-.24.63a27 27 0 0 1 -2.93-2.38c-.05-.17.14-1.05.35-.97z"></path>{" "}
+        <path d="m13.67 50.5s3.83 3.16 3.83 3.37-.11.67-.23.67a35.1 35.1 0 0 1 -4.08-3.07c-.04-.25.48-.97.48-.97z"></path>{" "}
+        <path d="m16.27 17c-.17-.24.44-2.3 1.57-3.91s2.19-2.52 2.65-2.4.77.61.6.82a7.05 7.05 0 0 0 -2.72 2.86c-.79 1.85-.55 3-.8 3.06a1.86 1.86 0 0 1 -1.3-.43z"></path>{" "}
+        <path d="m44.85 13.23a2.79 2.79 0 0 1 1.6.54c.09.25.27.83-.11.76a10.8 10.8 0 0 1 -1.43-.53c-.17-.06-.31-.72-.06-.77z"></path>{" "}
+      </g>{" "}
+    </g>
+  </svg>
+);
+
+export const ThemeIcons = {
+  light: Light,
+  dark: Dark,
+};
