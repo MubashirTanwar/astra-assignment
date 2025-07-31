@@ -19,10 +19,12 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TableSkeleton } from "@/components/Starships/TableSkeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -137,7 +139,7 @@ export function StarshipDataTable({
         header: ({ column }) => (
           <p className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
             Model
-            </p>
+          </p>
         ),
         cell: ({ getValue }) => (
           <div className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
@@ -149,7 +151,7 @@ export function StarshipDataTable({
         header: ({ column }) => (
           <p className="h-auto p-0 font-semibold text-purple-200 dark:text-purple-200 ">
             Manufacturer
-            </p>
+          </p>
         ),
         maxSize: 100,
         cell: ({ getValue }) => (
@@ -352,12 +354,21 @@ export function StarshipDataTable({
                           colSpan={columns.length}
                           className="h-24 text-center text-purple-200"
                         >
-                          No starships found in the database.
+                          {!isFetchingNextPage && status === "success"
+                            ? "No starships found"
+                            : null}
                         </TableCell>
                       </TableRow>
                     )}
                   </AnimatePresence>
                 </TableBody>
+                <TableFooter className="bg-transparent border-0">
+                  <TableCell colSpan={columns.length} className="text-center">
+                    {(isFetchingNextPage || status == "pending") && (
+                      <TableSkeleton rows={3} columns={columns.length - 1} />
+                    )}
+                  </TableCell>
+                </TableFooter>
               </Table>
             </div>
           </CardContent>
