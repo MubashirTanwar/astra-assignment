@@ -56,7 +56,7 @@ const handler = createNextHandler(
   {
     basePath: "/api/starships",
     jsonQuery: false,
-    responseValidation: false,
+    responseValidation: true,
     handlerType: "app-router",
   }
 );
